@@ -219,11 +219,32 @@ func (ws *windowsService) Install() error {
 		return err
 	}
 	defer s.Close()
+	r := []mgr.RecoveryAction{
+		{
+			Type:  mgr.NoAction,
+			Delay: time.Minute,
+		},
+		{
+			Type:  mgr.ServiceRestart,
+			Delay: time.Minute,
+		},
+		{
+			Type:  mgr.ServiceRestart,
+			Delay: time.Minute,
+		},
+	}
+
+	// 4 recovery actions with reset period
+	err = s.SetRecoveryActions(r, uint32(2000))
+	if err != nil {
+		return fmt.Errorf("SetRecoveryActions() failed: %s", err.Error())
+	}
+
 	err = eventlog.InstallAsEventCreate(ws.Name, eventlog.Error|eventlog.Warning|eventlog.Info)
 	if err != nil {
 		if !strings.Contains(err.Error(), "exists") {
 			s.Delete()
-			return fmt.Errorf("SetupEventLogSource() failed: %s", err)
+			return fmt.Errorf("SetupEventLogSource() failed: %s", err.Error())
 		}
 	}
 	return nil

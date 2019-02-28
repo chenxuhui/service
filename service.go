@@ -64,6 +64,8 @@ package service // import "github.com/kardianos/service"
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
+	"os"
 )
 
 const (
@@ -390,4 +392,11 @@ type Logger interface {
 	Errorf(format string, a ...interface{}) error
 	Warningf(format string, a ...interface{}) error
 	Infof(format string, a ...interface{}) error
+}
+
+func (c *Config) execPath() (string, error) {
+	if len(c.Executable) != 0 {
+		return filepath.Abs(c.Executable)
+	}
+	return os.Executable()
 }
