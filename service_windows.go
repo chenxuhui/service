@@ -229,13 +229,13 @@ func (ws *windowsService) Install() error {
 			Delay: time.Minute,
 		},
 		{
-			Type:  mgr.NoAction,
+			Type:  mgr.ServiceRestart,
 			Delay: time.Minute,
 		},
 	}
 
 	// recovery actions with reset period
-	err = s.SetRecoveryActions(r, uint32(2000))
+	err = s.SetRecoveryActions(r, uint32(10000))
 	if err != nil {
 		return fmt.Errorf("SetRecoveryActions() failed: %s", err.Error())
 	}
